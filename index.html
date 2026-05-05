@@ -1,0 +1,296 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>YouTubeNote · 학습 노트 아카이브</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Nanum+Myeongjo:wght@400;700;800&display=swap');
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  html { background: #f0efeb; }
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, "Apple SD Gothic Neo", "Pretendard", sans-serif;
+    max-width: 720px;
+    margin: 0 auto;
+    padding: 40px 20px;
+    color: #1a1a1a;
+    background: #fff;
+    word-break: keep-all;
+    box-shadow: 0 0 40px rgba(0,0,0,0.06);
+    min-height: 100vh;
+  }
+
+  .header {
+    text-align: center;
+    border-top: 3px solid #1a1a1a;
+    border-bottom: 3px solid #1a1a1a;
+    padding: 14px 0;
+    margin-bottom: 4px;
+  }
+  .header-sub {
+    font-size: 11px;
+    font-family: Arial, sans-serif;
+    color: #888;
+    letter-spacing: 2px;
+    margin-bottom: 6px;
+  }
+  .header-title {
+    font-size: 36px;
+    font-weight: 800;
+    font-family: 'Nanum Myeongjo', Georgia, serif;
+  }
+  .header-date {
+    font-size: 11px;
+    font-family: Arial, sans-serif;
+    color: #888;
+    margin-top: 6px;
+  }
+  .meta {
+    display: flex;
+    justify-content: space-between;
+    border-bottom: 1px solid #e0e0e0;
+    padding: 6px 0;
+    margin-bottom: 28px;
+    font-size: 11px;
+    font-family: Arial, sans-serif;
+    color: #888;
+  }
+
+  /* 검색 + 필터 */
+  .controls {
+    display: flex;
+    gap: 10px;
+    margin-bottom: 20px;
+    flex-wrap: wrap;
+  }
+  .search-input {
+    flex: 1;
+    min-width: 200px;
+    padding: 10px 14px;
+    border: 1px solid #d0cec8;
+    border-radius: 6px;
+    font-size: 13px;
+    background: #fafaf7;
+    font-family: inherit;
+    color: #1a1a1a;
+  }
+  .search-input:focus {
+    outline: none;
+    border-color: #1a1a1a;
+    background: #fff;
+  }
+  .filter-select {
+    padding: 10px 14px;
+    border: 1px solid #d0cec8;
+    border-radius: 6px;
+    font-size: 13px;
+    background: #fafaf7;
+    color: #1a1a1a;
+    cursor: pointer;
+    font-family: inherit;
+  }
+
+  /* 노트 항목 */
+  .archive-item {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    padding: 18px 4px;
+    border-bottom: 1px solid #e0e0e0;
+    text-decoration: none;
+    color: inherit;
+    transition: background 0.15s;
+  }
+  .archive-item:hover {
+    background: #fafaf7;
+  }
+  .archive-item:hover .archive-title {
+    text-decoration: underline;
+  }
+  .archive-left { flex: 1; min-width: 0; }
+  .archive-vol {
+    font-size: 11px;
+    font-family: Arial, sans-serif;
+    color: #888;
+    letter-spacing: 1px;
+    margin-bottom: 5px;
+  }
+  .archive-title {
+    font-size: 16px;
+    font-family: 'Nanum Myeongjo', Georgia, serif;
+    font-weight: 700;
+    line-height: 1.45;
+    margin-bottom: 5px;
+  }
+  .archive-tags {
+    font-size: 11px;
+    font-family: Arial, sans-serif;
+    color: #aaa;
+    line-height: 1.5;
+  }
+  .archive-meta {
+    font-size: 11px;
+    font-family: Arial, sans-serif;
+    color: #aaa;
+    white-space: nowrap;
+    margin-left: 16px;
+  }
+  .archive-badge {
+    display: inline-block;
+    background: #1a1a1a;
+    color: #fff;
+    font-size: 9px;
+    padding: 2px 7px;
+    border-radius: 3px;
+    letter-spacing: 1px;
+    margin-left: 6px;
+    vertical-align: middle;
+  }
+
+  /* 카테고리 색 */
+  .cat-design { color: #b8860b; }
+  .cat-ai { color: #4a6fa5; }
+  .cat-coding { color: #3d8b6f; }
+  .cat-business { color: #a04a6f; }
+
+  .empty {
+    text-align: center;
+    padding: 60px 20px;
+    color: #aaa;
+    font-size: 13px;
+  }
+
+  .footer {
+    border-top: 1px solid #e0e0e0;
+    padding-top: 16px;
+    text-align: center;
+    font-size: 10px;
+    font-family: Arial, sans-serif;
+    color: #aaa;
+    margin-top: 36px;
+    line-height: 1.7;
+  }
+  .footer a { color: #888; text-decoration: none; }
+  .footer a:hover { text-decoration: underline; }
+
+  .copyright-notice {
+    background: #fafaf7;
+    border-radius: 6px;
+    padding: 12px 16px;
+    font-size: 11px;
+    color: #888;
+    line-height: 1.6;
+    margin-top: 20px;
+  }
+</style>
+</head>
+<body>
+
+<div class="header">
+  <div class="header-sub">YOUTUBE LEARNING NOTE</div>
+  <div class="header-title">YouTubeNote</div>
+  <div class="header-date">유튜브 학습 노트 아카이브</div>
+</div>
+
+<div class="meta">
+  <span id="meta-stats">전체 노트</span>
+  <span>출처 표기 기반 학습 정리</span>
+</div>
+
+<div class="controls">
+  <input type="text" class="search-input" id="search" placeholder="제목, 채널, 분야로 검색...">
+  <select class="filter-select" id="filter-cat">
+    <option value="">전체 분야</option>
+    <option value="design">디자인/AI 도구</option>
+    <option value="ai">AI/머신러닝</option>
+    <option value="coding">코딩/개발</option>
+    <option value="business">비즈니스/창업</option>
+  </select>
+</div>
+
+<div id="archive-list"></div>
+
+<div class="copyright-notice">
+  본 아카이브는 비영리 개인 학습 목적으로 작성된 노트입니다. 각 영상의 저작권은 원작자에게 있으며, 노트는 영상 시청을 대체하지 않습니다.
+  원작자께서 삭제를 요청하시면 즉시 비공개 처리합니다.
+</div>
+
+<div class="footer">
+  YouTubeNote · 크림웍스 · <a href="https://github.com/jucheolkim/YouTubeNote" target="_blank">GitHub Repository</a><br>
+  매 학습마다 갱신 · 출처 표기 기반 학습 정리
+</div>
+
+<script>
+var NOTES = [
+  {
+    vol: 1,
+    date: "2026년 5월 5일",
+    category: "design",
+    categoryLabel: "디자인/AI 도구",
+    title: "디자인 시스템부터 배포까지 — 클로드 디자인 30분 풀코스",
+    channel: "시현의 모험",
+    tags: "Claude Design · Vercel · 디자인 시스템 · 랜딩 페이지",
+    path: "claude-design/클로드디자인_30분풀코스_교재.html",
+    youtube: "https://www.youtube.com/watch?v=MNMlzq7shi0"
+  }
+];
+
+var list = document.getElementById('archive-list');
+var searchInput = document.getElementById('search');
+var filterCat = document.getElementById('filter-cat');
+var metaStats = document.getElementById('meta-stats');
+var latestVol = NOTES.length > 0 ? Math.max.apply(null, NOTES.map(function(n) { return n.vol; })) : 0;
+
+function categoryClass(cat) {
+  return 'cat-' + cat;
+}
+
+function render() {
+  var query = searchInput.value.trim().toLowerCase();
+  var cat = filterCat.value;
+
+  var filtered = NOTES.filter(function(n) {
+    if (cat && n.category !== cat) return false;
+    if (query) {
+      var haystack = (n.title + ' ' + n.channel + ' ' + n.tags + ' ' + n.categoryLabel).toLowerCase();
+      if (haystack.indexOf(query) === -1) return false;
+    }
+    return true;
+  });
+
+  metaStats.textContent = '전체 ' + NOTES.length + '편 · 표시 ' + filtered.length + '편';
+
+  list.innerHTML = '';
+
+  if (filtered.length === 0) {
+    list.innerHTML = '<div class="empty">검색 결과가 없습니다.</div>';
+    return;
+  }
+
+  filtered.forEach(function(n) {
+    var a = document.createElement('a');
+    a.href = n.path;
+    a.className = 'archive-item';
+    var isLatest = (n.vol === latestVol);
+    a.innerHTML =
+      '<div class="archive-left">' +
+        '<div class="archive-vol">' +
+          'Note. ' + String(n.vol).padStart(3, '0') + ' · ' + n.date +
+          ' · <span class="' + categoryClass(n.category) + '">' + n.categoryLabel + '</span>' +
+          (isLatest ? '<span class="archive-badge">NEW</span>' : '') +
+        '</div>' +
+        '<div class="archive-title">' + n.title + '</div>' +
+        '<div class="archive-tags">' + n.channel + ' · ' + n.tags + '</div>' +
+      '</div>' +
+      '<div class="archive-meta">→</div>';
+    list.appendChild(a);
+  });
+}
+
+searchInput.addEventListener('input', render);
+filterCat.addEventListener('change', render);
+render();
+</script>
+
+</body>
+</html>
