@@ -1,0 +1,480 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>클로드 스킬로 AI 마케팅 팀 만들기 — 초보자용 교재</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  :root {
+    --bg: #fafaf7; --surface: #ffffff; --border: #e5e5e0;
+    --text: #1a1a1a; --text-secondary: #555; --text-muted: #888;
+    --tip-bg: #fef7e6; --tip-border: #c8941d; --tip-text: #5c3d05;
+    --check-bg: #f5f3ec; --accent: #1a6ef5;
+  }
+  html { scroll-behavior: smooth; }
+  body { font-family: "Pretendard", -apple-system, "Noto Sans KR", sans-serif; background: var(--bg); color: var(--text); line-height: 1.65; font-size: 15px; }
+
+  .top-header { background: var(--text); color: #fff; padding: 40px 60px; border-bottom: 4px solid #000; }
+  .top-header .label { font-size: 11px; color: #999; letter-spacing: 2px; margin-bottom: 12px; }
+  .top-header h1 { font-size: 36px; font-weight: 700; line-height: 1.2; margin-bottom: 14px; }
+  .top-header p { font-size: 15px; color: #ccc; max-width: 700px; line-height: 1.6; }
+  .top-header .meta { display: flex; flex-wrap: wrap; gap: 24px; margin-top: 20px; padding-top: 20px; border-top: 1px solid #333; }
+  .top-header .meta-item { font-size: 13px; color: #aaa; }
+  .top-header .meta-item b { color: #fff; font-weight: 500; margin-right: 6px; }
+
+  .container { max-width: 1280px; margin: 0 auto; padding: 50px 40px; }
+
+  .toc { background: var(--surface); border: 1px solid var(--border); border-radius: 12px; padding: 28px 32px; margin-bottom: 50px; }
+  .toc h2 { font-size: 14px; font-weight: 700; color: var(--text-muted); text-transform: uppercase; letter-spacing: 1px; margin-bottom: 18px; }
+  .toc-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 8px; }
+  .toc-link { display: flex; align-items: center; gap: 12px; padding: 10px 14px; border-radius: 8px; text-decoration: none; color: var(--text); font-size: 14px; transition: background 0.15s; }
+  .toc-link:hover { background: var(--check-bg); }
+  .toc-num { width: 24px; height: 24px; border-radius: 50%; background: var(--text); color: #fff; display: flex; align-items: center; justify-content: center; font-size: 11px; font-weight: 700; flex-shrink: 0; }
+  .toc-time { font-family: monospace; font-size: 12px; color: var(--text-muted); flex-shrink: 0; }
+
+  .chapter { margin-bottom: 70px; scroll-margin-top: 20px; }
+  .chapter-head { display: flex; align-items: center; gap: 16px; margin-bottom: 24px; padding-bottom: 16px; border-bottom: 2px solid var(--text); }
+  .chapter-num { width: 40px; height: 40px; border-radius: 50%; background: var(--text); color: #fff; display: flex; align-items: center; justify-content: center; font-size: 16px; font-weight: 700; flex-shrink: 0; }
+  .chapter-time { font-family: monospace; font-size: 13px; color: var(--text-muted); flex-shrink: 0; }
+  .chapter-title { font-size: 22px; font-weight: 700; }
+
+  .chapter-body { display: grid; grid-template-columns: 1fr 1fr; gap: 32px; align-items: start; }
+  .chapter-content { background: var(--surface); border: 1px solid var(--border); border-radius: 10px; padding: 24px 28px; }
+  .chapter-video { position: sticky; top: 20px; }
+  .video-wrapper { position: relative; width: 100%; padding-top: 56.25%; background: #000; border-radius: 10px; overflow: hidden; box-shadow: 0 4px 20px rgba(0,0,0,0.08); }
+  .video-wrapper iframe { position: absolute; top: 0; left: 0; width: 100%; height: 100%; border: 0; }
+  .video-caption { margin-top: 10px; font-size: 12px; color: var(--text-muted); text-align: center; }
+
+  .qa-q { font-size: 11px; color: var(--text-muted); font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 4px; margin-top: 14px; }
+  .qa-q:first-child { margin-top: 0; }
+  .qa-a { font-size: 14.5px; line-height: 1.7; }
+  .lead { color: var(--text-secondary); font-size: 14.5px; margin-bottom: 14px; line-height: 1.7; }
+
+  .checklist { background: var(--check-bg); border-radius: 8px; padding: 16px 20px; margin: 18px 0; }
+  .checklist-title { font-size: 12px; font-weight: 700; color: var(--text-secondary); margin-bottom: 10px; }
+  .check-row { display: flex; align-items: flex-start; gap: 10px; padding: 4px 0; font-size: 14px; line-height: 1.55; cursor: pointer; user-select: none; }
+  .check-box { width: 16px; height: 16px; border: 1.5px solid #999; border-radius: 4px; flex-shrink: 0; margin-top: 3px; display: flex; align-items: center; justify-content: center; font-size: 11px; color: transparent; transition: all 0.15s; }
+  .check-row.done .check-box { background: var(--text); border-color: var(--text); color: #fff; }
+  .check-row.done .check-text { color: var(--text-muted); text-decoration: line-through; }
+
+  .tip { background: var(--tip-bg); border-left: 3px solid var(--tip-border); padding: 12px 18px; margin: 16px 0; font-size: 13.5px; line-height: 1.6; color: var(--tip-text); border-radius: 0 6px 6px 0; }
+  .tip b { font-weight: 700; }
+
+  .compare { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin: 14px 0; }
+  .compare-box { border-radius: 8px; padding: 14px 16px; }
+  .compare-box.bad { background: #fff0f0; border: 1px solid #fcc; }
+  .compare-box.good { background: #f0fff4; border: 1px solid #9de; }
+  .compare-label { font-size: 11px; font-weight: 700; margin-bottom: 6px; }
+  .compare-box.bad .compare-label { color: #c00; }
+  .compare-box.good .compare-label { color: #080; }
+  .compare-text { font-size: 13px; line-height: 1.6; }
+
+  .term-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin: 14px 0; }
+  .term { background: #fafaf7; border: 1px solid var(--border); border-radius: 8px; padding: 12px 14px; }
+  .term-name { font-family: monospace; font-size: 13px; font-weight: 700; margin-bottom: 4px; }
+  .term-desc { font-size: 12.5px; color: var(--text-secondary); line-height: 1.5; }
+
+  .skill-list { margin: 14px 0; }
+  .skill-item { display: flex; align-items: flex-start; gap: 12px; padding: 10px 14px; border: 1px solid var(--border); border-radius: 8px; margin-bottom: 8px; background: var(--surface); }
+  .skill-badge { background: var(--text); color: #fff; font-size: 11px; font-weight: 700; padding: 2px 8px; border-radius: 20px; flex-shrink: 0; margin-top: 2px; }
+  .skill-detail { font-size: 13.5px; line-height: 1.6; }
+  .skill-detail b { display: block; margin-bottom: 2px; }
+
+  .summary-section { margin-top: 80px; padding-top: 50px; border-top: 2px solid var(--text); }
+  .summary-section h2 { font-size: 24px; font-weight: 700; margin-bottom: 24px; }
+  .glossary-full { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 12px; }
+
+  .one-liner { background: var(--text); color: #fff; padding: 32px 40px; border-radius: 12px; margin: 50px 0 30px; }
+  .one-liner .label { font-size: 11px; color: #999; letter-spacing: 2px; margin-bottom: 12px; }
+  .one-liner p { font-size: 17px; line-height: 1.7; color: #fff; }
+
+  .footer { text-align: center; color: var(--text-muted); font-size: 12px; padding: 30px 0; border-top: 1px solid var(--border); margin-top: 30px; }
+
+  @media (max-width: 900px) {
+    .chapter-body { grid-template-columns: 1fr; }
+    .chapter-video { position: static; }
+    .top-header { padding: 30px 24px; }
+    .top-header h1 { font-size: 26px; }
+    .container { padding: 30px 20px; }
+    .term-grid, .compare { grid-template-columns: 1fr; }
+  }
+  .to-top { position: fixed; bottom: 30px; right: 30px; width: 44px; height: 44px; background: var(--text); color: #fff; border: none; border-radius: 50%; cursor: pointer; font-size: 18px; box-shadow: 0 4px 12px rgba(0,0,0,0.15); opacity: 0; transition: opacity 0.2s; z-index: 100; }
+  .to-top.visible { opacity: 1; }
+</style>
+</head>
+<body>
+
+<header class="top-header">
+  <div class="label">BEGINNER WORKBOOK · 2026</div>
+  <h1>클로드 스킬로 AI 마케팅 팀 만들기</h1>
+  <p>Claude Skills를 활용해 마케터 1~3명이 10명 분량의 업무를 처리하는 AI 마케팅 팀을 구축하는 방법. 타임스탬프별로 영상을 보며 따라하는 입문 교재.</p>
+  <div class="meta">
+    <div class="meta-item"><b>원본</b>Grace Leung</div>
+    <div class="meta-item"><b>난이도</b>입문~중급</div>
+    <div class="meta-item"><b>준비물</b>Claude 유료 플랜 + Claude Code</div>
+    <div class="meta-item"><b>분량</b>11개 챕터 · 16분 42초</div>
+  </div>
+</header>
+
+<div class="container">
+
+  <div style="background:#fff8e6;border:1px solid #f0d070;border-radius:10px;padding:18px 22px;margin-bottom:30px;font-size:13.5px;line-height:1.65;color:#5c3d05;">
+    <div style="font-weight:700;margin-bottom:8px;">출처 안내</div>
+    이 문서는 <a href="https://www.youtube.com/watch?v=X8afcX2s2Mo" target="_blank" style="color:#5c3d05;text-decoration:underline;">Grace Leung — "Claude Skills: Build Your First AI Marketing Team in 16 Minutes"</a> 영상을 학습용으로 정리한 한글 노트입니다. 영상의 모든 저작권은 원작자(Grace Leung 채널)에게 있습니다. 비영리 학습 목적으로 작성되었으며, 영상 시청을 대체하지 않습니다.
+  </div>
+
+  <nav class="toc">
+    <h2>목차</h2>
+    <div class="toc-grid">
+      <a class="toc-link" href="#ch1"><span class="toc-num">1</span><span class="toc-time">00:00</span><span>클로드 스킬이 왜 최강 레버리지인가</span></a>
+      <a class="toc-link" href="#ch2"><span class="toc-num">2</span><span class="toc-time">00:21</span><span>스킬 라이브러리 설계하기</span></a>
+      <a class="toc-link" href="#ch3"><span class="toc-num">3</span><span class="toc-time">01:11</span><span>만들 5가지 스킬 소개</span></a>
+      <a class="toc-link" href="#ch4"><span class="toc-num">4</span><span class="toc-time">01:44</span><span>프로젝트 셋업</span></a>
+      <a class="toc-link" href="#ch5"><span class="toc-num">5</span><span class="toc-time">02:26</span><span>스킬 생성 방법 1</span></a>
+      <a class="toc-link" href="#ch6"><span class="toc-num">6</span><span class="toc-time">04:06</span><span>스킬 생성 방법 2</span></a>
+      <a class="toc-link" href="#ch7"><span class="toc-num">7</span><span class="toc-time">06:02</span><span>스킬 3·4·5 만들기</span></a>
+      <a class="toc-link" href="#ch8"><span class="toc-num">8</span><span class="toc-time">07:36</span><span>멀티 스킬 오케스트레이션</span></a>
+      <a class="toc-link" href="#ch9"><span class="toc-num">9</span><span class="toc-time">09:43</span><span>서브에이전트 vs 에이전트 팀</span></a>
+      <a class="toc-link" href="#ch10"><span class="toc-num">10</span><span class="toc-time">10:47</span><span>병렬 서브에이전트 + 에이전트 팀</span></a>
+      <a class="toc-link" href="#ch11"><span class="toc-num">11</span><span class="toc-time">13:44</span><span>스킬 이식 · 플러그인 · Cowork</span></a>
+    </div>
+  </nav>
+
+  <!-- 챕터 1 -->
+  <section class="chapter" id="ch1">
+    <div class="chapter-head"><div class="chapter-num">1</div><div class="chapter-time">00:00 — 00:20</div><div class="chapter-title">클로드 스킬이 왜 최강 레버리지인가</div></div>
+    <div class="chapter-body">
+      <div class="chapter-content">
+        <div class="qa-q">문제가 뭔가요?</div>
+        <div class="qa-a">대부분의 마케터는 1~3명이 10명 몫의 일을 합니다. 채널은 늘어나고, 결과물은 쌓이는데 예산과 인력은 그대로예요.</div>
+        <div class="qa-q">기존 해결책은?</div>
+        <div class="qa-a">에이전시 고용, 프리랜서 외주, 예산 소모. 하지만 이 방식은 비용이 너무 크고 느립니다.</div>
+        <div class="qa-q">클로드 스킬이 다른 이유는?</div>
+        <div class="qa-a">스킬은 단순한 프롬프트가 아닙니다. 브랜드 가이드라인, SOP, 마케팅 프레임워크를 담은 <b>재사용 가능한 워크플로우</b>입니다. 한 번 만들면 매번 컨텍스트를 다시 설명할 필요가 없어요.</div>
+        <div class="compare">
+          <div class="compare-box bad">
+            <div class="compare-label">❌ 일반 프롬프트</div>
+            <div class="compare-text">"이 제품에 대한 SNS 게시글 써줘" → 매번 일반적이고 일관성 없는 결과</div>
+          </div>
+          <div class="compare-box good">
+            <div class="compare-label">✅ 클로드 스킬</div>
+            <div class="compare-text">브랜드 톤, 타겟, 포맷이 내장된 워크플로우 → 항상 일관된 고품질 결과</div>
+          </div>
+        </div>
+      </div>
+      <div class="chapter-video">
+        <div class="video-wrapper"><iframe src="https://www.youtube-nocookie.com/embed/X8afcX2s2Mo?start=0&end=21&rel=0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe></div>
+        <div class="video-caption">00:00 — 00:21 · <a href="https://www.youtube.com/watch?v=X8afcX2s2Mo&t=0s" target="_blank" style="color:#555;text-decoration:underline;">YouTube에서 직접 보기 ↗</a></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 챕터 2 -->
+  <section class="chapter" id="ch2">
+    <div class="chapter-head"><div class="chapter-num">2</div><div class="chapter-time">00:21 — 01:10</div><div class="chapter-title">스킬 라이브러리 설계하기</div></div>
+    <div class="chapter-body">
+      <div class="chapter-content">
+        <div class="qa-q">스킬 라이브러리란?</div>
+        <div class="qa-a">마케팅 업무를 역할별로 나누어, 각 역할에 맞는 스킬 파일(.md)을 모아둔 폴더입니다. AI 팀원 한 명 한 명에게 업무 매뉴얼을 주는 것과 같아요.</div>
+        <div class="qa-q">어떻게 설계해요?</div>
+        <div class="qa-a">내 마케팅 팀에 어떤 역할이 필요한지부터 생각합니다. 리서처, 카피라이터, 디자이너, 분석가, 프로젝트 매니저 등 실제 팀 구조처럼 역할을 먼저 정의하세요.</div>
+        <div class="tip"><b>핵심 개념</b> · 스킬 = .md 파일 하나. 이 파일 안에 역할 정의, 작업 방식, 브랜드 가이드, 예시 아웃풋이 들어갑니다. Claude Code 프로젝트 폴더에 넣으면 바로 사용 가능.</div>
+        <div class="checklist">
+          <div class="checklist-title">스킬 라이브러리 설계 체크리스트</div>
+          <div class="check-row" onclick="this.classList.toggle('done')"><div class="check-box">✓</div><div class="check-text">우리 팀에 필요한 마케팅 역할 목록 작성</div></div>
+          <div class="check-row" onclick="this.classList.toggle('done')"><div class="check-box">✓</div><div class="check-text">각 역할이 반복적으로 하는 작업 정리</div></div>
+          <div class="check-row" onclick="this.classList.toggle('done')"><div class="check-box">✓</div><div class="check-text">브랜드 가이드라인 문서 준비</div></div>
+          <div class="check-row" onclick="this.classList.toggle('done')"><div class="check-box">✓</div><div class="check-text">잘 만들어진 기존 결과물 예시 모으기</div></div>
+        </div>
+      </div>
+      <div class="chapter-video">
+        <div class="video-wrapper"><iframe src="https://www.youtube-nocookie.com/embed/X8afcX2s2Mo?start=21&end=71&rel=0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe></div>
+        <div class="video-caption">00:21 — 01:11 · <a href="https://www.youtube.com/watch?v=X8afcX2s2Mo&t=21s" target="_blank" style="color:#555;text-decoration:underline;">YouTube에서 직접 보기 ↗</a></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 챕터 3 -->
+  <section class="chapter" id="ch3">
+    <div class="chapter-head"><div class="chapter-num">3</div><div class="chapter-time">01:11 — 01:43</div><div class="chapter-title">만들 5가지 스킬 소개</div></div>
+    <div class="chapter-body">
+      <div class="chapter-content">
+        <div class="lead">영상에서 실제로 만드는 AI 마케팅 팀의 5가지 역할입니다.</div>
+        <div class="skill-list">
+          <div class="skill-item"><div class="skill-badge">1</div><div class="skill-detail"><b>마케팅 리서처 (Marketing Researcher)</b>시장 조사, 경쟁사 분석, 트렌드 파악</div></div>
+          <div class="skill-item"><div class="skill-badge">2</div><div class="skill-detail"><b>콘텐츠 스트래티지스트 (Content Strategist)</b>콘텐츠 기획, 채널별 전략 수립</div></div>
+          <div class="skill-item"><div class="skill-badge">3</div><div class="skill-detail"><b>크리에이티브 디자이너 (Creative Designer)</b>비주얼 방향, 카피 + 디자인 지시서 작성</div></div>
+          <div class="skill-item"><div class="skill-badge">4</div><div class="skill-detail"><b>퍼포먼스 트래커 (Performance Tracker)</b>데이터 분석, KPI 모니터링, 보고서 작성</div></div>
+          <div class="skill-item"><div class="skill-badge">5</div><div class="skill-detail"><b>프로젝트 매니저 (Project Manager)</b>캠페인 전체 조율, 타임라인 관리</div></div>
+        </div>
+        <div class="tip"><b>포인트</b> · 5개의 스킬이 각자의 전문성을 갖고, 필요에 따라 협업합니다. 마치 실제 마케팅 팀처럼요.</div>
+      </div>
+      <div class="chapter-video">
+        <div class="video-wrapper"><iframe src="https://www.youtube-nocookie.com/embed/X8afcX2s2Mo?start=71&end=104&rel=0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe></div>
+        <div class="video-caption">01:11 — 01:44 · <a href="https://www.youtube.com/watch?v=X8afcX2s2Mo&t=71s" target="_blank" style="color:#555;text-decoration:underline;">YouTube에서 직접 보기 ↗</a></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 챕터 4 -->
+  <section class="chapter" id="ch4">
+    <div class="chapter-head"><div class="chapter-num">4</div><div class="chapter-time">01:44 — 02:25</div><div class="chapter-title">프로젝트 셋업</div></div>
+    <div class="chapter-body">
+      <div class="chapter-content">
+        <div class="checklist">
+          <div class="checklist-title">Claude Code 프로젝트 셋업 순서</div>
+          <div class="check-row" onclick="this.classList.toggle('done')"><div class="check-box">✓</div><div class="check-text">Claude Code 실행</div></div>
+          <div class="check-row" onclick="this.classList.toggle('done')"><div class="check-box">✓</div><div class="check-text">새 폴더 생성 (예: <code>marketing-team/</code>)</div></div>
+          <div class="check-row" onclick="this.classList.toggle('done')"><div class="check-box">✓</div><div class="check-text"><code>skills/</code> 서브폴더 생성</div></div>
+          <div class="check-row" onclick="this.classList.toggle('done')"><div class="check-box">✓</div><div class="check-text">Anthropic 공식 스킬 저장소 참고: <a href="https://github.com/anthropics/skills" target="_blank" style="color:#1a6ef5;">github.com/anthropics/skills</a></div></div>
+          <div class="check-row" onclick="this.classList.toggle('done')"><div class="check-box">✓</div><div class="check-text">브랜드 가이드라인 파일 폴더에 추가</div></div>
+        </div>
+        <div class="tip"><b>참고 자료</b> · Anthropic이 공식으로 제공하는 스킬 템플릿을 먼저 살펴보고 참고하면 시간이 절약됩니다.</div>
+      </div>
+      <div class="chapter-video">
+        <div class="video-wrapper"><iframe src="https://www.youtube-nocookie.com/embed/X8afcX2s2Mo?start=104&end=146&rel=0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe></div>
+        <div class="video-caption">01:44 — 02:26 · <a href="https://www.youtube.com/watch?v=X8afcX2s2Mo&t=104s" target="_blank" style="color:#555;text-decoration:underline;">YouTube에서 직접 보기 ↗</a></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 챕터 5 -->
+  <section class="chapter" id="ch5">
+    <div class="chapter-head"><div class="chapter-num">5</div><div class="chapter-time">02:26 — 04:05</div><div class="chapter-title">스킬 생성 방법 1 — 직접 작성</div></div>
+    <div class="chapter-body">
+      <div class="chapter-content">
+        <div class="qa-q">방법 1이 뭔가요?</div>
+        <div class="qa-a">Claude Code에게 원하는 스킬을 자연어로 설명하고, Claude가 .md 스킬 파일을 직접 작성하게 하는 방법입니다.</div>
+        <div class="checklist">
+          <div class="checklist-title">스킬 작성 프롬프트 구성요소</div>
+          <div class="check-row" onclick="this.classList.toggle('done')"><div class="check-box">✓</div><div class="check-text"><b>역할 정의:</b> 이 스킬이 누구인지 (예: 시니어 마케팅 리서처)</div></div>
+          <div class="check-row" onclick="this.classList.toggle('done')"><div class="check-box">✓</div><div class="check-text"><b>작업 목록:</b> 이 스킬이 하는 일 목록</div></div>
+          <div class="check-row" onclick="this.classList.toggle('done')"><div class="check-box">✓</div><div class="check-text"><b>출력 형식:</b> 결과물이 어떤 형태여야 하는지</div></div>
+          <div class="check-row" onclick="this.classList.toggle('done')"><div class="check-box">✓</div><div class="check-text"><b>품질 기준:</b> 좋은 결과물의 기준</div></div>
+          <div class="check-row" onclick="this.classList.toggle('done')"><div class="check-box">✓</div><div class="check-text"><b>예시:</b> 잘 만들어진 결과물 샘플 첨부</div></div>
+        </div>
+        <div class="tip"><b>핵심 원칙</b> · "예시를 보여주는 것"이 가장 강력합니다. 원하는 아웃풋의 샘플을 함께 제공하면 스킬 품질이 확 올라갑니다.</div>
+      </div>
+      <div class="chapter-video">
+        <div class="video-wrapper"><iframe src="https://www.youtube-nocookie.com/embed/X8afcX2s2Mo?start=146&end=246&rel=0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe></div>
+        <div class="video-caption">02:26 — 04:06 · <a href="https://www.youtube.com/watch?v=X8afcX2s2Mo&t=146s" target="_blank" style="color:#555;text-decoration:underline;">YouTube에서 직접 보기 ↗</a></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 챕터 6 -->
+  <section class="chapter" id="ch6">
+    <div class="chapter-head"><div class="chapter-num">6</div><div class="chapter-time">04:06 — 06:01</div><div class="chapter-title">스킬 생성 방법 2 — 기존 SOP 변환</div></div>
+    <div class="chapter-body">
+      <div class="chapter-content">
+        <div class="qa-q">방법 2가 뭔가요?</div>
+        <div class="qa-a">기존에 갖고 있는 SOP(표준 운영 절차), 브랜드 가이드라인, 우수 결과물 샘플을 Claude Code에 넣고 자동으로 스킬 파일로 변환시키는 방법입니다.</div>
+        <div class="qa-q">언제 쓰나요?</div>
+        <div class="qa-a">이미 잘 되고 있는 업무 프로세스가 있을 때. "이 문서들을 보고 스킬 파일로 만들어줘"라고 하면 됩니다.</div>
+        <div class="checklist">
+          <div class="checklist-title">방법 2 실행 단계</div>
+          <div class="check-row" onclick="this.classList.toggle('done')"><div class="check-box">✓</div><div class="check-text">기존 SOP 문서 준비 (PDF, Word, 노션 등)</div></div>
+          <div class="check-row" onclick="this.classList.toggle('done')"><div class="check-box">✓</div><div class="check-text">브랜드 가이드라인 파일 준비</div></div>
+          <div class="check-row" onclick="this.classList.toggle('done')"><div class="check-box">✓</div><div class="check-text">잘 만들어진 결과물 예시 3~5개 준비</div></div>
+          <div class="check-row" onclick="this.classList.toggle('done')"><div class="check-box">✓</div><div class="check-text">Claude Code에 파일 업로드 후 변환 요청</div></div>
+          <div class="check-row" onclick="this.classList.toggle('done')"><div class="check-box">✓</div><div class="check-text">생성된 스킬 파일 검토 및 수정</div></div>
+        </div>
+        <div class="tip"><b>강사 실제 사례</b> · 제품 발표 이메일 스킬을 만들 때 기존 최고 성과 이메일 템플릿을 넣었더니, 자동으로 그 패턴을 학습한 스킬이 생성되었습니다.</div>
+      </div>
+      <div class="chapter-video">
+        <div class="video-wrapper"><iframe src="https://www.youtube-nocookie.com/embed/X8afcX2s2Mo?start=246&end=362&rel=0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe></div>
+        <div class="video-caption">04:06 — 06:02 · <a href="https://www.youtube.com/watch?v=X8afcX2s2Mo&t=246s" target="_blank" style="color:#555;text-decoration:underline;">YouTube에서 직접 보기 ↗</a></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 챕터 7 -->
+  <section class="chapter" id="ch7">
+    <div class="chapter-head"><div class="chapter-num">7</div><div class="chapter-time">06:02 — 07:35</div><div class="chapter-title">스킬 3·4·5 빠르게 만들기</div></div>
+    <div class="chapter-body">
+      <div class="chapter-content">
+        <div class="lead">크리에이티브 디자이너, 퍼포먼스 트래커, 프로젝트 매니저 스킬을 만드는 구간입니다.</div>
+        <div class="qa-q">빠르게 만드는 비결은?</div>
+        <div class="qa-a">처음 두 스킬을 만든 패턴을 그대로 재활용합니다. "앞에서 만든 방식으로 이번엔 퍼포먼스 트래커 스킬 만들어줘"라고 하면 Claude가 일관된 구조로 생성해줘요.</div>
+        <div class="checklist">
+          <div class="checklist-title">스킬 3개 연속 생성 흐름</div>
+          <div class="check-row" onclick="this.classList.toggle('done')"><div class="check-box">✓</div><div class="check-text">스킬 1~2 패턴 확인</div></div>
+          <div class="check-row" onclick="this.classList.toggle('done')"><div class="check-box">✓</div><div class="check-text">동일한 구조로 스킬 3 (크리에이티브 디자이너) 생성</div></div>
+          <div class="check-row" onclick="this.classList.toggle('done')"><div class="check-box">✓</div><div class="check-text">스킬 4 (퍼포먼스 트래커) 생성</div></div>
+          <div class="check-row" onclick="this.classList.toggle('done')"><div class="check-box">✓</div><div class="check-text">스킬 5 (프로젝트 매니저) 생성</div></div>
+          <div class="check-row" onclick="this.classList.toggle('done')"><div class="check-box">✓</div><div class="check-text">5개 스킬 파일 모두 skills/ 폴더에 저장</div></div>
+        </div>
+        <div class="tip"><b>시간 절약 팁</b> · 스킬 1개 제대로 만들면 나머지는 훨씬 빠릅니다. 패턴을 잡은 뒤 반복 생성하세요.</div>
+      </div>
+      <div class="chapter-video">
+        <div class="video-wrapper"><iframe src="https://www.youtube-nocookie.com/embed/X8afcX2s2Mo?start=362&end=456&rel=0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe></div>
+        <div class="video-caption">06:02 — 07:36 · <a href="https://www.youtube.com/watch?v=X8afcX2s2Mo&t=362s" target="_blank" style="color:#555;text-decoration:underline;">YouTube에서 직접 보기 ↗</a></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 챕터 8 -->
+  <section class="chapter" id="ch8">
+    <div class="chapter-head"><div class="chapter-num">8</div><div class="chapter-time">07:36 — 09:42</div><div class="chapter-title">멀티 스킬 오케스트레이션</div></div>
+    <div class="chapter-body">
+      <div class="chapter-content">
+        <div class="qa-q">오케스트레이션이 뭔가요?</div>
+        <div class="qa-a">여러 스킬을 동시에 또는 순서대로 연결해서 복잡한 작업을 처리하는 것입니다. "이 스킬 써서 저걸 해줘"라고 직접 지정하지 않아도 Claude가 알아서 적합한 스킬을 선택합니다.</div>
+        <div class="qa-q">어떻게 작동해요?</div>
+        <div class="qa-a">복잡한 요청을 하면 Claude가 어떤 스킬들을 어떤 순서로 사용할지 스스로 판단합니다.</div>
+        <div class="tip"><b>실제 예시</b> · "분기별 브랜드 리뷰가 필요해. 전략 분석, 성과 데이터, 프레젠테이션 덱 포함해서." → Claude가 리서처 → 트래커 → 디자이너 스킬을 차례로 사용해 전부 완성해줍니다.</div>
+        <div class="compare">
+          <div class="compare-box bad">
+            <div class="compare-label">❌ 단일 스킬 실행</div>
+            <div class="compare-text">"마케팅 리서치 스킬로 경쟁사 X 분석해줘" → 리서치만 됨</div>
+          </div>
+          <div class="compare-box good">
+            <div class="compare-label">✅ 멀티 스킬 오케스트레이션</div>
+            <div class="compare-text">"제품 런칭 캠페인 계획하고 실행해줘" → Claude가 모든 스킬을 조율해서 처리</div>
+          </div>
+        </div>
+      </div>
+      <div class="chapter-video">
+        <div class="video-wrapper"><iframe src="https://www.youtube-nocookie.com/embed/X8afcX2s2Mo?start=456&end=583&rel=0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe></div>
+        <div class="video-caption">07:36 — 09:43 · <a href="https://www.youtube.com/watch?v=X8afcX2s2Mo&t=456s" target="_blank" style="color:#555;text-decoration:underline;">YouTube에서 직접 보기 ↗</a></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 챕터 9 -->
+  <section class="chapter" id="ch9">
+    <div class="chapter-head"><div class="chapter-num">9</div><div class="chapter-time">09:43 — 10:46</div><div class="chapter-title">서브에이전트 vs 에이전트 팀 차이</div></div>
+    <div class="chapter-body">
+      <div class="chapter-content">
+        <div class="lead">스케일업할 때 두 가지 방식 중 하나를 선택해야 합니다.</div>
+        <div class="term-grid">
+          <div class="term">
+            <div class="term-name">서브에이전트 (Sub-Agent)</div>
+            <div class="term-desc">메인 Claude가 여러 서브 Claude를 호출해서 병렬로 작업. 동시에 여러 일을 처리할 때 사용.</div>
+          </div>
+          <div class="term">
+            <div class="term-name">에이전트 팀 (Agent Team)</div>
+            <div class="term-desc">각 에이전트가 독립적으로 역할을 갖고 협업. 더 복잡하고 장기적인 프로젝트에 적합.</div>
+          </div>
+        </div>
+        <div class="qa-q">언제 어떤 걸 써요?</div>
+        <div class="qa-a"><b>서브에이전트:</b> 동시에 여러 리서치를 병렬로 처리하거나, 빠른 결과가 필요할 때.<br><b>에이전트 팀:</b> 전략 수립 → 실행 → 검토처럼 단계가 있는 복잡한 캠페인.</div>
+        <div class="tip"><b>공식 문서</b> · Claude Code Agent Teams 공식 문서: <a href="https://code.claude.com/docs/en/agent-teams" target="_blank" style="color:#1a6ef5;">code.claude.com/docs/en/agent-teams</a></div>
+      </div>
+      <div class="chapter-video">
+        <div class="video-wrapper"><iframe src="https://www.youtube-nocookie.com/embed/X8afcX2s2Mo?start=583&end=647&rel=0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe></div>
+        <div class="video-caption">09:43 — 10:47 · <a href="https://www.youtube.com/watch?v=X8afcX2s2Mo&t=583s" target="_blank" style="color:#555;text-decoration:underline;">YouTube에서 직접 보기 ↗</a></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 챕터 10 -->
+  <section class="chapter" id="ch10">
+    <div class="chapter-head"><div class="chapter-num">10</div><div class="chapter-time">10:47 — 13:43</div><div class="chapter-title">병렬 서브에이전트 + 에이전트 팀 실전</div></div>
+    <div class="chapter-body">
+      <div class="chapter-content">
+        <div class="qa-q">병렬 서브에이전트 실전 예시는?</div>
+        <div class="qa-a">리서치 스킬을 가진 서브에이전트 3개를 동시에 실행. 각각 다른 경쟁사를 조사하고, 결과를 합쳐서 종합 분석 보고서 생성. 순차적으로 하면 3배 걸릴 일을 동시에 처리.</div>
+        <div class="qa-q">에이전트 팀 실전 예시는?</div>
+        <div class="qa-a">"분기 브랜드 리뷰: 전략 분석, 성과 데이터, 프레젠테이션 덱 만들어줘. 적절한 스킬 사용해서 조율해줘." → Claude가 팀장 역할을 하며 각 에이전트에게 작업을 배분.</div>
+        <div class="checklist">
+          <div class="checklist-title">에이전트 팀 요청 작성 방법</div>
+          <div class="check-row" onclick="this.classList.toggle('done')"><div class="check-box">✓</div><div class="check-text">원하는 최종 결과물 명확하게 서술</div></div>
+          <div class="check-row" onclick="this.classList.toggle('done')"><div class="check-box">✓</div><div class="check-text">포함되어야 할 요소 목록 제시</div></div>
+          <div class="check-row" onclick="this.classList.toggle('done')"><div class="check-box">✓</div><div class="check-text">"적절한 스킬 사용해서 조율해줘" 추가</div></div>
+          <div class="check-row" onclick="this.classList.toggle('done')"><div class="check-box">✓</div><div class="check-text">어떤 스킬을 쓸지는 Claude에게 맡기기</div></div>
+        </div>
+        <div class="tip"><b>강사 실제 결과</b> · 혼자서 수요일 오후까지 전체 분기 브랜드 리뷰를 완성. Claude Pro 구독비용만으로. AI가 팀원을 대체한 게 아니라 팀원처럼 협업한 것.</div>
+      </div>
+      <div class="chapter-video">
+        <div class="video-wrapper"><iframe src="https://www.youtube-nocookie.com/embed/X8afcX2s2Mo?start=647&end=824&rel=0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe></div>
+        <div class="video-caption">10:47 — 13:44 · <a href="https://www.youtube.com/watch?v=X8afcX2s2Mo&t=647s" target="_blank" style="color:#555;text-decoration:underline;">YouTube에서 직접 보기 ↗</a></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 챕터 11 -->
+  <section class="chapter" id="ch11">
+    <div class="chapter-head"><div class="chapter-num">11</div><div class="chapter-time">13:44 — 끝</div><div class="chapter-title">스킬 이식 · 플러그인 · Cowork</div></div>
+    <div class="chapter-body">
+      <div class="chapter-content">
+        <div class="qa-q">스킬을 더 편하게 쓰는 방법은?</div>
+        <div class="qa-a">Claude Plugin으로 만들면 팀 전체가 기술 지식 없이도 스킬을 사용할 수 있습니다. 또한 Claude Cowork에서 실행하면 비개발자도 쉽게 접근 가능합니다.</div>
+        <div class="term-grid">
+          <div class="term">
+            <div class="term-name">Claude Plugin</div>
+            <div class="term-desc">스킬을 플러그인으로 패키징. 팀원이 Claude Code 없이도 바로 사용 가능. 이식성(portable) 극대화.</div>
+          </div>
+          <div class="term">
+            <div class="term-name">Claude Cowork</div>
+            <div class="term-desc">비개발자용 데스크톱 툴. 스킬을 GUI 환경에서 실행. 파일·태스크 자동화에 최적.</div>
+          </div>
+        </div>
+        <div class="checklist">
+          <div class="checklist-title">스킬 배포 흐름</div>
+          <div class="check-row" onclick="this.classList.toggle('done')"><div class="check-box">✓</div><div class="check-text">스킬 파일(.md) 완성 및 테스트</div></div>
+          <div class="check-row" onclick="this.classList.toggle('done')"><div class="check-box">✓</div><div class="check-text">Claude Plugin으로 패키징</div></div>
+          <div class="check-row" onclick="this.classList.toggle('done')"><div class="check-box">✓</div><div class="check-text">팀원에게 배포</div></div>
+          <div class="check-row" onclick="this.classList.toggle('done')"><div class="check-box">✓</div><div class="check-text">Cowork에서 실행 테스트</div></div>
+          <div class="check-row" onclick="this.classList.toggle('done')"><div class="check-box">✓</div><div class="check-text">피드백 받아 스킬 개선</div></div>
+        </div>
+        <div class="tip"><b>핵심 장점</b> · 스킬은 확장 가능(scalable)하고 이식 가능(portable)합니다. 한 번 잘 만들면 팀 전체가 사용하고, 비즈니스가 커져도 그대로 확장됩니다.</div>
+      </div>
+      <div class="chapter-video">
+        <div class="video-wrapper"><iframe src="https://www.youtube-nocookie.com/embed/X8afcX2s2Mo?start=824&rel=0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe></div>
+        <div class="video-caption">13:44 — 끝까지 · <a href="https://www.youtube.com/watch?v=X8afcX2s2Mo&t=824s" target="_blank" style="color:#555;text-decoration:underline;">YouTube에서 직접 보기 ↗</a></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 종합 정리 -->
+  <section class="summary-section">
+    <h2>핵심 용어 사전</h2>
+    <div class="glossary-full">
+      <div class="term"><div class="term-name">Claude Skills</div><div class="term-desc">SOP·브랜드 가이드·프레임워크를 담은 재사용 가능한 .md 워크플로우 파일</div></div>
+      <div class="term"><div class="term-name">스킬 라이브러리</div><div class="term-desc">역할별 스킬 파일을 모아둔 폴더. AI 팀의 인재풀</div></div>
+      <div class="term"><div class="term-name">SOP</div><div class="term-desc">Standard Operating Procedure. 표준 운영 절차 문서</div></div>
+      <div class="term"><div class="term-name">오케스트레이션</div><div class="term-desc">여러 스킬을 Claude가 자동으로 조율해서 실행하는 것</div></div>
+      <div class="term"><div class="term-name">서브에이전트</div><div class="term-desc">메인 에이전트가 호출하는 하위 에이전트. 병렬 처리에 사용</div></div>
+      <div class="term"><div class="term-name">에이전트 팀</div><div class="term-desc">각자 역할을 가진 에이전트들이 협업하는 구조</div></div>
+      <div class="term"><div class="term-name">Claude Plugin</div><div class="term-desc">스킬을 패키징해 팀 전체가 쉽게 쓸 수 있게 만드는 기능</div></div>
+      <div class="term"><div class="term-name">Claude Cowork</div><div class="term-desc">비개발자용 데스크톱 자동화 툴</div></div>
+      <div class="term"><div class="term-name">High-level Plan</div><div class="term-desc">에이전트 팀에 주는 큰 그림 지시. 세부 실행은 Claude에게 위임</div></div>
+      <div class="term"><div class="term-name">이식성 (Portable)</div><div class="term-desc">스킬을 다른 환경·팀에서도 그대로 사용할 수 있는 특성</div></div>
+      <div class="term"><div class="term-name">Perplexity MCP</div><div class="term-desc">실시간 웹 검색을 스킬에 연결하는 MCP 서버</div></div>
+      <div class="term"><div class="term-name">Nano Banana MCP</div><div class="term-desc">영상에서 사용된 추가 MCP 서버. GitHub에서 무료 제공</div></div>
+    </div>
+
+    <div class="one-liner">
+      <div class="label">ONE-LINE TAKEAWAY</div>
+      <p>역할 정의 → 스킬(.md) 작성 → skills/ 폴더 저장 → 멀티 스킬 오케스트레이션 → 서브에이전트/팀으로 확장 → 플러그인으로 팀 배포.<br>이 흐름 하나로 1인 마케터가 팀 전체의 업무를 처리할 수 있습니다.</p>
+    </div>
+
+    <div style="background:#f0f4ff;border:1px solid #c0d0ff;border-radius:10px;padding:18px 22px;margin-top:20px;font-size:13.5px;line-height:1.65;color:#1a3080;">
+      <div style="font-weight:700;margin-bottom:8px;">📎 영상 속 참고 링크</div>
+      <div style="display:flex;flex-direction:column;gap:6px;">
+        <a href="https://github.com/anthropics/skills" target="_blank" style="color:#1a3080;">🔗 Anthropic 공식 스킬 저장소 (GitHub)</a>
+        <a href="https://code.claude.com/docs/en/agent-teams" target="_blank" style="color:#1a3080;">🔗 Claude Code Agent Teams 공식 문서</a>
+        <a href="https://docs.perplexity.ai/docs/getting-started/integrations/mcp-server" target="_blank" style="color:#1a3080;">🔗 Perplexity MCP 설정 가이드</a>
+        <a href="https://github.com/zhongweili/nanobanana-mcp-server" target="_blank" style="color:#1a3080;">🔗 Nano Banana MCP (GitHub)</a>
+      </div>
+    </div>
+  </section>
+
+  <div class="footer">
+    클로드 스킬 AI 마케팅 팀 워크북 · Grace Leung 영상 기반 한글 정리
+  </div>
+
+</div>
+
+<button class="to-top" onclick="window.scrollTo({top:0, behavior:'smooth'})">↑</button>
+<script>
+  const toTop = document.querySelector('.to-top');
+  window.addEventListener('scroll', () => {
+    if (window.scrollY > 400) toTop.classList.add('visible');
+    else toTop.classList.remove('visible');
+  });
+</script>
+</body>
+</html>
