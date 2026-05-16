@@ -1,0 +1,420 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>요즘 개발자들이 갈아탄 Codex — 한글 학습 교재</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  :root {
+    --bg: #f7f9fc; --surface: #ffffff; --border: #e2e8f0;
+    --text: #1a202c; --text-secondary: #4a5568; --text-muted: #718096;
+    --tip-bg: #fff8e6; --tip-border: #c8941d; --tip-text: #5c3d05;
+    --check-bg: #f0f4f8; --accent: #10a37f;
+  }
+  html { scroll-behavior: smooth; }
+  body { font-family: "Pretendard", -apple-system, "Noto Sans KR", sans-serif; background: var(--bg); color: var(--text); line-height: 1.65; font-size: 15px; }
+
+  .top-header { background: #0d0d0d; color: #fff; padding: 40px 60px; border-bottom: 4px solid #10a37f; }
+  .top-header .label { font-size: 11px; color: #10a37f; letter-spacing: 2px; margin-bottom: 12px; font-weight: 700; }
+  .top-header h1 { font-size: 34px; font-weight: 700; line-height: 1.2; margin-bottom: 14px; }
+  .top-header p { font-size: 15px; color: #aaa; max-width: 700px; line-height: 1.6; }
+  .top-header .meta { display: flex; flex-wrap: wrap; gap: 24px; margin-top: 20px; padding-top: 20px; border-top: 1px solid #333; }
+  .top-header .meta-item { font-size: 13px; color: #aaa; }
+  .top-header .meta-item b { color: #10a37f; font-weight: 600; margin-right: 6px; }
+
+  .container { max-width: 1280px; margin: 0 auto; padding: 50px 40px; }
+
+  .toc { background: var(--surface); border: 1px solid var(--border); border-radius: 12px; padding: 28px 32px; margin-bottom: 50px; }
+  .toc h2 { font-size: 13px; font-weight: 700; color: var(--text-muted); text-transform: uppercase; letter-spacing: 1px; margin-bottom: 18px; }
+  .toc-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 8px; }
+  .toc-link { display: flex; align-items: center; gap: 12px; padding: 10px 14px; border-radius: 8px; text-decoration: none; color: var(--text); font-size: 14px; transition: background 0.15s; }
+  .toc-link:hover { background: var(--check-bg); }
+  .toc-num { width: 24px; height: 24px; border-radius: 50%; background: #10a37f; color: #fff; display: flex; align-items: center; justify-content: center; font-size: 11px; font-weight: 700; flex-shrink: 0; }
+  .toc-time { font-family: monospace; font-size: 12px; color: var(--text-muted); flex-shrink: 0; }
+
+  .chapter { margin-bottom: 70px; scroll-margin-top: 20px; }
+  .chapter-head { display: flex; align-items: center; gap: 16px; margin-bottom: 24px; padding-bottom: 16px; border-bottom: 2px solid #10a37f; }
+  .chapter-num { width: 40px; height: 40px; border-radius: 50%; background: #10a37f; color: #fff; display: flex; align-items: center; justify-content: center; font-size: 16px; font-weight: 700; flex-shrink: 0; }
+  .chapter-time { font-family: monospace; font-size: 13px; color: var(--text-muted); flex-shrink: 0; }
+  .chapter-title { font-size: 22px; font-weight: 700; }
+
+  .chapter-body { display: grid; grid-template-columns: 1fr 1fr; gap: 32px; align-items: start; }
+  .chapter-content { background: var(--surface); border: 1px solid var(--border); border-radius: 10px; padding: 24px 28px; }
+  .chapter-video { position: sticky; top: 20px; }
+  .video-wrapper { position: relative; width: 100%; padding-top: 56.25%; background: #000; border-radius: 10px; overflow: hidden; box-shadow: 0 4px 20px rgba(0,0,0,0.12); }
+  .video-wrapper iframe { position: absolute; top: 0; left: 0; width: 100%; height: 100%; border: 0; }
+  .video-caption { margin-top: 10px; font-size: 12px; color: var(--text-muted); text-align: center; }
+
+  .qa-q { font-size: 11px; color: #10a37f; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 4px; margin-top: 14px; }
+  .qa-q:first-child { margin-top: 0; }
+  .qa-a { font-size: 14.5px; line-height: 1.7; }
+  .lead { color: var(--text-secondary); font-size: 14.5px; margin-bottom: 14px; line-height: 1.7; }
+
+  .checklist { background: var(--check-bg); border-radius: 8px; padding: 16px 20px; margin: 18px 0; }
+  .checklist-title { font-size: 12px; font-weight: 700; color: var(--text-secondary); margin-bottom: 10px; }
+  .check-row { display: flex; align-items: flex-start; gap: 10px; padding: 4px 0; font-size: 14px; line-height: 1.55; cursor: pointer; user-select: none; }
+  .check-box { width: 16px; height: 16px; border: 1.5px solid #aaa; border-radius: 4px; flex-shrink: 0; margin-top: 3px; display: flex; align-items: center; justify-content: center; font-size: 11px; color: transparent; transition: all 0.15s; }
+  .check-row.done .check-box { background: #10a37f; border-color: #10a37f; color: #fff; }
+  .check-row.done .check-text { color: var(--text-muted); text-decoration: line-through; }
+
+  .tip { background: var(--tip-bg); border-left: 3px solid var(--tip-border); padding: 12px 18px; margin: 16px 0; font-size: 13.5px; line-height: 1.6; color: var(--tip-text); border-radius: 0 6px 6px 0; }
+  .tip b { font-weight: 700; }
+  .info { background: #f0fff8; border-left: 3px solid #10a37f; padding: 12px 18px; margin: 16px 0; font-size: 13.5px; line-height: 1.6; color: #065f46; border-radius: 0 6px 6px 0; }
+  .info b { font-weight: 700; }
+
+  .compare { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin: 14px 0; }
+  .compare-box { border-radius: 8px; padding: 14px 16px; }
+  .compare-box.old { background: #fff5f5; border: 1px solid #fcc; }
+  .compare-box.new { background: #f0fff8; border: 1px solid #9de; }
+  .compare-label { font-size: 11px; font-weight: 700; margin-bottom: 6px; }
+  .compare-box.old .compare-label { color: #c00; }
+  .compare-box.new .compare-label { color: #065f46; }
+  .compare-text { font-size: 13px; line-height: 1.6; }
+
+  .term-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin: 14px 0; }
+  .term { background: #f8fafc; border: 1px solid var(--border); border-radius: 8px; padding: 12px 14px; }
+  .term-name { font-family: monospace; font-size: 13px; font-weight: 700; margin-bottom: 4px; color: #10a37f; }
+  .term-desc { font-size: 12.5px; color: var(--text-secondary); line-height: 1.5; }
+
+  .code-block { background: #1a202c; color: #e2e8f0; font-family: monospace; font-size: 13px; padding: 14px 18px; border-radius: 8px; margin: 12px 0; line-height: 1.6; overflow-x: auto; }
+
+  .summary-section { margin-top: 80px; padding-top: 50px; border-top: 2px solid #10a37f; }
+  .summary-section h2 { font-size: 24px; font-weight: 700; margin-bottom: 24px; }
+  .glossary-full { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 12px; }
+
+  .one-liner { background: #0d0d0d; color: #fff; padding: 32px 40px; border-radius: 12px; margin: 50px 0 30px; border-left: 4px solid #10a37f; }
+  .one-liner .label { font-size: 11px; color: #10a37f; letter-spacing: 2px; margin-bottom: 12px; font-weight: 700; }
+  .one-liner p { font-size: 17px; line-height: 1.7; color: #e2e8f0; }
+
+  .footer { text-align: center; color: var(--text-muted); font-size: 12px; padding: 30px 0; border-top: 1px solid var(--border); margin-top: 30px; }
+
+  @media (max-width: 900px) {
+    .chapter-body { grid-template-columns: 1fr; }
+    .chapter-video { position: static; }
+    .top-header { padding: 30px 24px; }
+    .top-header h1 { font-size: 26px; }
+    .container { padding: 30px 20px; }
+    .term-grid, .compare { grid-template-columns: 1fr; }
+  }
+  .to-top { position: fixed; bottom: 30px; right: 30px; width: 44px; height: 44px; background: #10a37f; color: #fff; border: none; border-radius: 50%; cursor: pointer; font-size: 18px; box-shadow: 0 4px 12px rgba(16,163,127,0.3); opacity: 0; transition: opacity 0.2s; z-index: 100; }
+  .to-top.visible { opacity: 1; }
+</style>
+</head>
+<body>
+
+<header class="top-header">
+  <div class="label">BEGINNER WORKBOOK · 2026</div>
+  <h1>요즘 개발자들이 갈아탄 Codex</h1>
+  <p>OpenAI의 AI 코딩 에이전트 Codex를 처음부터 실전까지 — 설치, 기본 사용법, AGENTS.md 설정, 병렬 작업까지 한글로 정리한 학습 교재.</p>
+  <div class="meta">
+    <div class="meta-item"><b>원본</b>조쉬 (YouTube)</div>
+    <div class="meta-item"><b>후원</b>OpenAI Codex</div>
+    <div class="meta-item"><b>준비물</b>ChatGPT Plus 이상 플랜</div>
+    <div class="meta-item"><b>분량</b>8개 챕터</div>
+  </div>
+</header>
+
+<div class="container">
+
+  <div style="background:#fff8e6;border:1px solid #f0d070;border-radius:10px;padding:18px 22px;margin-bottom:30px;font-size:13.5px;line-height:1.65;color:#5c3d05;">
+    <div style="font-weight:700;margin-bottom:8px;">출처 안내</div>
+    이 문서는 <a href="https://www.youtube.com/watch?v=BBg17O2Fa_U" target="_blank" style="color:#5c3d05;text-decoration:underline;">조쉬 — "요즘 개발자들이 다 갈아탄 Codex, 얼마나 좋은지 전부 써보겠습니다"</a> 영상을 학습용으로 정리한 한글 노트입니다. 영상의 모든 저작권은 원작자(조쉬 채널)에게 있습니다. 비영리 학습 목적으로 작성되었으며, 영상 시청을 대체하지 않습니다.
+  </div>
+
+  <nav class="toc">
+    <h2>목차</h2>
+    <div class="toc-grid">
+      <a class="toc-link" href="#ch1"><span class="toc-num">1</span><span class="toc-time">00:00</span><span>Codex란 무엇인가</span></a>
+      <a class="toc-link" href="#ch2"><span class="toc-num">2</span><span class="toc-time">02:19</span><span>Codex 접속 & 첫 화면</span></a>
+      <a class="toc-link" href="#ch3"><span class="toc-num">3</span><span class="toc-time">04:30</span><span>GitHub 연동 & 첫 작업</span></a>
+      <a class="toc-link" href="#ch4"><span class="toc-num">4</span><span class="toc-time">07:00</span><span>AGENTS.md 설정하기</span></a>
+      <a class="toc-link" href="#ch5"><span class="toc-num">5</span><span class="toc-time">10:00</span><span>병렬 작업 실전</span></a>
+      <a class="toc-link" href="#ch6"><span class="toc-num">6</span><span class="toc-time">13:00</span><span>Codex CLI 사용법</span></a>
+      <a class="toc-link" href="#ch7"><span class="toc-num">7</span><span class="toc-time">16:00</span><span>실전 활용 팁</span></a>
+      <a class="toc-link" href="#ch8"><span class="toc-num">8</span><span class="toc-time">19:00</span><span>한계 & 정리</span></a>
+    </div>
+  </nav>
+
+  <!-- 챕터 1 -->
+  <section class="chapter" id="ch1">
+    <div class="chapter-head"><div class="chapter-num">1</div><div class="chapter-time">00:00 — 02:18</div><div class="chapter-title">Codex란 무엇인가</div></div>
+    <div class="chapter-body">
+      <div class="chapter-content">
+        <div class="qa-q">Codex가 뭐예요?</div>
+        <div class="qa-a">OpenAI가 2025년 5월에 공개한 <b>클라우드 기반 AI 소프트웨어 엔지니어링 에이전트</b>입니다. 단순히 코드를 생성해주는 도구가 아니라, 코딩·버그 수정·테스트·코드 리뷰까지 개발 전 과정을 자율적으로 수행합니다.</div>
+        <div class="qa-q">기존 AI 코딩 도구와 뭐가 달라요?</div>
+        <div class="qa-a">기존 도구는 실시간으로 옆에서 도와주는 방식이라면, Codex는 <b>작업을 위임받아 혼자 진행</b>합니다. 여러 작업을 동시에 병렬로 처리할 수 있어서 "AI 주니어 개발자 여러 명"을 동시에 굴리는 느낌입니다.</div>
+        <div class="compare">
+          <div class="compare-box old">
+            <div class="compare-label">❌ 기존 방식 (Copilot 등)</div>
+            <div class="compare-text">실시간 코드 제안. 개발자가 계속 옆에 있어야 함. 한 번에 한 가지 작업.</div>
+          </div>
+          <div class="compare-box new">
+            <div class="compare-label">✅ Codex 방식</div>
+            <div class="compare-text">작업을 맡기고 자리를 비워도 됨. 여러 작업 병렬 처리. 결과물 검토만 하면 됨.</div>
+          </div>
+        </div>
+        <div class="info"><b>현재 지원 플랜</b> · ChatGPT Plus, Pro, Team, Enterprise. 2026년 기준 GPT-5.4 단일 모델에 Codex 코딩 특화 로직이 통합되어 있습니다.</div>
+      </div>
+      <div class="chapter-video">
+        <div class="video-wrapper">
+          <iframe src="https://www.youtube-nocookie.com/embed/BBg17O2Fa_U?start=0&rel=0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+        </div>
+        <div class="video-caption">00:00 — 02:19 · <a href="https://www.youtube.com/watch?v=BBg17O2Fa_U&t=0s" target="_blank" style="color:#555;text-decoration:underline;">YouTube에서 직접 보기 ↗</a></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 챕터 2 -->
+  <section class="chapter" id="ch2">
+    <div class="chapter-head"><div class="chapter-num">2</div><div class="chapter-time">02:19 — 04:29</div><div class="chapter-title">Codex 접속 & 첫 화면</div></div>
+    <div class="chapter-body">
+      <div class="chapter-content">
+        <div class="qa-q">어떻게 접속해요?</div>
+        <div class="qa-a">ChatGPT 사이드바에 Codex 버튼이 생겨 있습니다. 클릭하면 Codex 전용 인터페이스로 진입합니다.</div>
+        <div class="checklist">
+          <div class="checklist-title">첫 화면 둘러보기</div>
+          <div class="check-row" onclick="this.classList.toggle('done')"><div class="check-box">✓</div><div class="check-text">ChatGPT 좌측 사이드바 → Codex 버튼 클릭</div></div>
+          <div class="check-row" onclick="this.classList.toggle('done')"><div class="check-box">✓</div><div class="check-text">상단: 진행 중인 태스크 목록 확인</div></div>
+          <div class="check-row" onclick="this.classList.toggle('done')"><div class="check-box">✓</div><div class="check-text">우측: GitHub 저장소 연결 패널 확인</div></div>
+          <div class="check-row" onclick="this.classList.toggle('done')"><div class="check-box">✓</div><div class="check-text">하단 입력창: 자연어로 작업 지시하는 곳</div></div>
+        </div>
+        <div class="tip"><b>핵심 개념</b> · Codex는 각 작업을 <b>샌드박스 환경</b>에서 독립적으로 실행합니다. 작업 중 인터넷은 차단되고, GitHub 저장소에서만 코드를 가져옵니다.</div>
+      </div>
+      <div class="chapter-video">
+        <div class="video-wrapper">
+          <iframe src="https://www.youtube-nocookie.com/embed/BBg17O2Fa_U?start=139&rel=0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+        </div>
+        <div class="video-caption">02:19 — 04:30 · <a href="https://www.youtube.com/watch?v=BBg17O2Fa_U&t=139s" target="_blank" style="color:#555;text-decoration:underline;">YouTube에서 직접 보기 ↗</a></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 챕터 3 -->
+  <section class="chapter" id="ch3">
+    <div class="chapter-head"><div class="chapter-num">3</div><div class="chapter-time">04:30 — 06:59</div><div class="chapter-title">GitHub 연동 & 첫 작업 맡기기</div></div>
+    <div class="chapter-body">
+      <div class="chapter-content">
+        <div class="qa-q">왜 GitHub가 필요해요?</div>
+        <div class="qa-a">Codex는 코드를 GitHub 저장소에서 가져와 작업하고, 결과를 PR(Pull Request)로 돌려줍니다. GitHub 없이는 실제 프로젝트에 적용이 안 됩니다.</div>
+        <div class="checklist">
+          <div class="checklist-title">GitHub 연동 순서</div>
+          <div class="check-row" onclick="this.classList.toggle('done')"><div class="check-box">✓</div><div class="check-text">Codex 화면 우측 → "Connect GitHub" 클릭</div></div>
+          <div class="check-row" onclick="this.classList.toggle('done')"><div class="check-box">✓</div><div class="check-text">GitHub 계정 로그인 & 권한 허용</div></div>
+          <div class="check-row" onclick="this.classList.toggle('done')"><div class="check-box">✓</div><div class="check-text">작업할 저장소(Repository) 선택</div></div>
+          <div class="check-row" onclick="this.classList.toggle('done')"><div class="check-box">✓</div><div class="check-text">입력창에 첫 작업 자연어로 입력</div></div>
+          <div class="check-row" onclick="this.classList.toggle('done')"><div class="check-box">✓</div><div class="check-text">Codex가 태스크 생성 → 진행 상황 확인</div></div>
+          <div class="check-row" onclick="this.classList.toggle('done')"><div class="check-box">✓</div><div class="check-text">완료 후 PR 확인 → 코드 리뷰 → 머지</div></div>
+        </div>
+        <div class="tip"><b>첫 작업 추천</b> · 처음엔 "README.md 파일에 프로젝트 설명 추가해줘" 같은 간단한 작업으로 시작하세요. Codex가 어떻게 작동하는지 감을 잡을 수 있습니다.</div>
+      </div>
+      <div class="chapter-video">
+        <div class="video-wrapper">
+          <iframe src="https://www.youtube-nocookie.com/embed/BBg17O2Fa_U?start=270&rel=0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+        </div>
+        <div class="video-caption">04:30 — 07:00 · <a href="https://www.youtube.com/watch?v=BBg17O2Fa_U&t=270s" target="_blank" style="color:#555;text-decoration:underline;">YouTube에서 직접 보기 ↗</a></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 챕터 4 -->
+  <section class="chapter" id="ch4">
+    <div class="chapter-head"><div class="chapter-num">4</div><div class="chapter-time">07:00 — 09:59</div><div class="chapter-title">AGENTS.md — Codex에게 설명서 주기</div></div>
+    <div class="chapter-body">
+      <div class="chapter-content">
+        <div class="qa-q">AGENTS.md가 뭔가요?</div>
+        <div class="qa-a">Codex에게 "이 프로젝트는 이렇게 돌아가"라고 알려주는 설명서 파일입니다. README.md와 비슷하지만 AI 전용입니다. 저장소 루트에 넣으면 Codex가 자동으로 읽습니다.</div>
+        <div class="qa-q">뭘 적어야 해요?</div>
+        <div class="qa-a">코드베이스 탐색 방법, 테스트 실행 명령어, 프로젝트 표준 관행, 사용 기술 스택 등을 적습니다. 이게 잘 되어 있을수록 Codex 결과물 품질이 올라갑니다.</div>
+        <div class="code-block">
+# AGENTS.md 예시
+
+## 프로젝트 개요
+Next.js + TypeScript 기반 웹 애플리케이션
+
+## 테스트 실행
+npm run test
+npm run test:e2e
+
+## 코딩 컨벤션
+- 함수형 컴포넌트 사용
+- ESLint + Prettier 적용
+- 커밋 메시지: feat/fix/docs 형식
+
+## 주의사항
+- .env 파일 절대 커밋 금지
+- main 브랜치 직접 푸시 금지
+        </div>
+        <div class="tip"><b>핵심</b> · AGENTS.md가 없으면 Codex가 프로젝트를 맨땅에서 파악해야 해서 실수가 많아집니다. 처음 설정에 10분 투자하면 이후 작업 품질이 확 달라집니다.</div>
+      </div>
+      <div class="chapter-video">
+        <div class="video-wrapper">
+          <iframe src="https://www.youtube-nocookie.com/embed/BBg17O2Fa_U?start=420&rel=0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+        </div>
+        <div class="video-caption">07:00 — 10:00 · <a href="https://www.youtube.com/watch?v=BBg17O2Fa_U&t=420s" target="_blank" style="color:#555;text-decoration:underline;">YouTube에서 직접 보기 ↗</a></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 챕터 5 -->
+  <section class="chapter" id="ch5">
+    <div class="chapter-head"><div class="chapter-num">5</div><div class="chapter-time">10:00 — 12:59</div><div class="chapter-title">병렬 작업 — Codex의 진짜 강점</div></div>
+    <div class="chapter-body">
+      <div class="chapter-content">
+        <div class="qa-q">병렬 작업이 뭔가요?</div>
+        <div class="qa-a">여러 개의 작업을 동시에 Codex에게 맡기면, 각각 독립된 샌드박스에서 동시에 진행됩니다. 순차적으로 했을 때 3배 걸리던 일이 동시에 처리됩니다.</div>
+        <div class="checklist">
+          <div class="checklist-title">병렬 작업 실전 예시</div>
+          <div class="check-row" onclick="this.classList.toggle('done')"><div class="check-box">✓</div><div class="check-text">태스크 1: "로그인 버그 수정해줘"</div></div>
+          <div class="check-row" onclick="this.classList.toggle('done')"><div class="check-box">✓</div><div class="check-text">태스크 2: "결제 모듈 테스트 코드 작성해줘"</div></div>
+          <div class="check-row" onclick="this.classList.toggle('done')"><div class="check-box">✓</div><div class="check-text">태스크 3: "API 문서 업데이트해줘"</div></div>
+          <div class="check-row" onclick="this.classList.toggle('done')"><div class="check-box">✓</div><div class="check-text">세 작업 동시 진행 → 각각 PR로 결과 수신</div></div>
+          <div class="check-row" onclick="this.classList.toggle('done')"><div class="check-box">✓</div><div class="check-text">PR 리뷰 후 순서대로 머지</div></div>
+        </div>
+        <div class="tip"><b>실제 사례</b> · Harvey 사례: Codex 도입 후 초기 반복 개발 시간이 30~50% 단축. 엔지니어들이 시스템 설계 같은 고수준 업무에 집중 가능해졌습니다.</div>
+        <div class="info"><b>주의</b> · 병렬 작업은 서로 독립적인 작업일 때 효과적입니다. 같은 파일을 동시에 수정하는 작업은 충돌이 날 수 있으니 분리해서 진행하세요.</div>
+      </div>
+      <div class="chapter-video">
+        <div class="video-wrapper">
+          <iframe src="https://www.youtube-nocookie.com/embed/BBg17O2Fa_U?start=600&rel=0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+        </div>
+        <div class="video-caption">10:00 — 13:00 · <a href="https://www.youtube.com/watch?v=BBg17O2Fa_U&t=600s" target="_blank" style="color:#555;text-decoration:underline;">YouTube에서 직접 보기 ↗</a></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 챕터 6 -->
+  <section class="chapter" id="ch6">
+    <div class="chapter-head"><div class="chapter-num">6</div><div class="chapter-time">13:00 — 15:59</div><div class="chapter-title">Codex CLI — 터미널에서 쓰기</div></div>
+    <div class="chapter-body">
+      <div class="chapter-content">
+        <div class="qa-q">CLI 버전이 따로 있어요?</div>
+        <div class="qa-a">네. 터미널에서 직접 Codex를 실행할 수 있는 CLI 도구가 있습니다. 로컬 환경에서 쓰고 싶은 개발자에게 적합합니다.</div>
+        <div class="checklist">
+          <div class="checklist-title">CLI 설치 & 실행</div>
+          <div class="check-row" onclick="this.classList.toggle('done')"><div class="check-box">✓</div><div class="check-text">터미널 열기</div></div>
+          <div class="check-row" onclick="this.classList.toggle('done')"><div class="check-box">✓</div><div class="check-text"><code>npm install -g @openai/codex</code> 실행</div></div>
+          <div class="check-row" onclick="this.classList.toggle('done')"><div class="check-box">✓</div><div class="check-text">ChatGPT 계정으로 로그인 (자동 API 키 설정)</div></div>
+          <div class="check-row" onclick="this.classList.toggle('done')"><div class="check-box">✓</div><div class="check-text">프로젝트 폴더로 이동</div></div>
+          <div class="check-row" onclick="this.classList.toggle('done')"><div class="check-box">✓</div><div class="check-text"><code>codex</code> 명령어로 실행</div></div>
+        </div>
+        <div class="code-block">
+# 설치
+npm install -g @openai/codex
+
+# 실행 (프로젝트 폴더에서)
+codex
+
+# 작업 지시 예시
+> 로그인 페이지에서 비밀번호 유효성 검사가 안 되는 버그 수정해줘
+        </div>
+        <div class="tip"><b>안전장치</b> · CLI는 샌드박스 환경을 자동 생성합니다. Git 명령어처럼 저장소 외부에 영향을 주는 작업은 반드시 사용자 동의를 먼저 구합니다.</div>
+      </div>
+      <div class="chapter-video">
+        <div class="video-wrapper">
+          <iframe src="https://www.youtube-nocookie.com/embed/BBg17O2Fa_U?start=780&rel=0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+        </div>
+        <div class="video-caption">13:00 — 16:00 · <a href="https://www.youtube.com/watch?v=BBg17O2Fa_U&t=780s" target="_blank" style="color:#555;text-decoration:underline;">YouTube에서 직접 보기 ↗</a></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 챕터 7 -->
+  <section class="chapter" id="ch7">
+    <div class="chapter-head"><div class="chapter-num">7</div><div class="chapter-time">16:00 — 18:59</div><div class="chapter-title">실전 활용 팁</div></div>
+    <div class="chapter-body">
+      <div class="chapter-content">
+        <div class="lead">Codex를 잘 쓰기 위한 현장 노하우입니다.</div>
+        <div class="checklist">
+          <div class="checklist-title">Codex 잘 쓰는 법</div>
+          <div class="check-row" onclick="this.classList.toggle('done')"><div class="check-box">✓</div><div class="check-text"><b>AGENTS.md 먼저 잘 써두기</b> — 품질의 절반은 여기서 결정</div></div>
+          <div class="check-row" onclick="this.classList.toggle('done')"><div class="check-box">✓</div><div class="check-text"><b>작업 단위를 작게 쪼개기</b> — "전체 리팩토링"보다 "A 모듈 리팩토링"</div></div>
+          <div class="check-row" onclick="this.classList.toggle('done')"><div class="check-box">✓</div><div class="check-text"><b>PR 꼭 검토하기</b> — 자동화라도 맹신 금지, 반드시 코드 리뷰</div></div>
+          <div class="check-row" onclick="this.classList.toggle('done')"><div class="check-box">✓</div><div class="check-text"><b>테스트 코드 함께 요청하기</b> — "버그 수정 + 테스트 코드도 작성해줘"</div></div>
+          <div class="check-row" onclick="this.classList.toggle('done')"><div class="check-box">✓</div><div class="check-text"><b>반복 작업에 적극 활용</b> — 이슈 분류, CI/CD, 알림 모니터링 등</div></div>
+        </div>
+        <div class="tip"><b>작업 지시 잘하는 법</b> · "버그 고쳐줘"보다 "로그인 시 이메일 형식 유효성 검사가 통과되는 버그가 있어. auth/login.ts 파일 확인해서 고쳐줘"처럼 구체적으로 적을수록 결과가 좋아집니다.</div>
+      </div>
+      <div class="chapter-video">
+        <div class="video-wrapper">
+          <iframe src="https://www.youtube-nocookie.com/embed/BBg17O2Fa_U?start=960&rel=0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+        </div>
+        <div class="video-caption">16:00 — 19:00 · <a href="https://www.youtube.com/watch?v=BBg17O2Fa_U&t=960s" target="_blank" style="color:#555;text-decoration:underline;">YouTube에서 직접 보기 ↗</a></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 챕터 8 -->
+  <section class="chapter" id="ch8">
+    <div class="chapter-head"><div class="chapter-num">8</div><div class="chapter-time">19:00 — 끝</div><div class="chapter-title">한계 & 정리</div></div>
+    <div class="chapter-body">
+      <div class="chapter-content">
+        <div class="qa-q">Codex의 한계는?</div>
+        <div class="qa-a">아직 리서치 프리뷰 단계라 한계가 있습니다. 프런트엔드 작업을 위한 이미지 입력 미지원, 진행 중 경로 수정 불가, 원격 에이전트 위임 작업은 시간이 더 걸림 등입니다.</div>
+        <div class="term-grid">
+          <div class="term"><div class="term-name">✅ 잘 하는 것</div><div class="term-desc">버그 수정, 테스트 코드 작성, 리팩토링, 문서화, 반복적인 코드 작업, PR 생성</div></div>
+          <div class="term"><div class="term-name">⚠️ 아직 부족한 것</div><div class="term-desc">UI 이미지 기반 작업, 진행 중 방향 전환, 매우 복잡한 아키텍처 설계</div></div>
+          <div class="term"><div class="term-name">📋 사용 요금제</div><div class="term-desc">ChatGPT Plus, Pro, Team, Enterprise. 작업 복잡도에 따라 사용량 차이 있음</div></div>
+          <div class="term"><div class="term-name">🔗 연동 가능</div><div class="term-desc">GitHub, VS Code, IDE 터미널, Slack(베타). CLI로도 사용 가능</div></div>
+        </div>
+        <div class="info"><b>결론</b> · Codex는 AI가 팀원을 대체하는 게 아니라, 반복적이고 시간이 많이 드는 작업을 위임받아 처리해주는 "주니어 개발자 여러 명"과 같습니다. 개발자는 설계와 리뷰에 집중할 수 있게 됩니다.</div>
+      </div>
+      <div class="chapter-video">
+        <div class="video-wrapper">
+          <iframe src="https://www.youtube-nocookie.com/embed/BBg17O2Fa_U?start=1140&rel=0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+        </div>
+        <div class="video-caption">19:00 — 끝까지 · <a href="https://www.youtube.com/watch?v=BBg17O2Fa_U&t=1140s" target="_blank" style="color:#555;text-decoration:underline;">YouTube에서 직접 보기 ↗</a></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 종합 정리 -->
+  <section class="summary-section">
+    <h2>핵심 용어 사전</h2>
+    <div class="glossary-full">
+      <div class="term"><div class="term-name">Codex</div><div class="term-desc">OpenAI의 클라우드 기반 AI 소프트웨어 엔지니어링 에이전트 (2025년 5월 출시)</div></div>
+      <div class="term"><div class="term-name">AGENTS.md</div><div class="term-desc">Codex에게 프로젝트 구조·컨벤션·테스트 방법을 알려주는 설명서 파일</div></div>
+      <div class="term"><div class="term-name">샌드박스</div><div class="term-desc">Codex가 작업하는 격리된 실행 환경. 외부 인터넷 차단, 실수해도 안전</div></div>
+      <div class="term"><div class="term-name">PR (Pull Request)</div><div class="term-desc">Codex가 작업 완료 후 코드 변경사항을 제출하는 방식. 사람이 검토 후 머지</div></div>
+      <div class="term"><div class="term-name">병렬 처리</div><div class="term-desc">여러 태스크를 동시에 독립적으로 실행하는 Codex의 핵심 기능</div></div>
+      <div class="term"><div class="term-name">Codex CLI</div><div class="term-desc">터미널에서 Codex를 사용하는 명령줄 도구. npm install -g @openai/codex</div></div>
+      <div class="term"><div class="term-name">비동기 위임</div><div class="term-desc">작업을 맡기고 다른 일을 하다가 나중에 결과를 확인하는 방식</div></div>
+      <div class="term"><div class="term-name">codex-1</div><div class="term-desc">Codex의 기반 모델. SWE-Bench Verified 기준 최고 수준 코딩 성능</div></div>
+      <div class="term"><div class="term-name">머지 (Merge)</div><div class="term-desc">PR을 검토 후 메인 브랜치에 코드를 합치는 작업</div></div>
+      <div class="term"><div class="term-name">SWE-Bench</div><div class="term-desc">AI 코딩 에이전트 성능을 평가하는 표준 벤치마크</div></div>
+      <div class="term"><div class="term-name">CI/CD</div><div class="term-desc">지속적 통합/배포. Codex가 자동화할 수 있는 반복 작업 중 하나</div></div>
+      <div class="term"><div class="term-name">리팩토링</div><div class="term-desc">기능 변경 없이 코드 구조를 개선하는 작업. Codex가 잘 하는 것 중 하나</div></div>
+    </div>
+
+    <div class="one-liner">
+      <div class="label">ONE-LINE TAKEAWAY</div>
+      <p>AGENTS.md 잘 써두기 → GitHub 연동 → 작업 단위로 쪼개서 맡기기 → 병렬로 여러 개 동시 진행 → PR 검토 후 머지.<br>이 흐름만 익히면 Codex로 개발 생산성을 실질적으로 끌어올릴 수 있습니다.</p>
+    </div>
+
+    <div style="background:#f0f8ff;border:1px solid #b3d4f5;border-radius:10px;padding:18px 22px;margin-top:20px;font-size:13.5px;line-height:1.65;color:#1a365d;">
+      <div style="font-weight:700;margin-bottom:8px;">📎 참고 링크</div>
+      <div style="display:flex;flex-direction:column;gap:6px;">
+        <a href="https://openai.com/ko-KR/codex/" target="_blank" style="color:#1a365d;">🔗 OpenAI Codex 공식 페이지</a>
+        <a href="https://help.openai.com/ko-kr/articles/11369540-using-codex-with-your-chatgpt-plan" target="_blank" style="color:#1a365d;">🔗 ChatGPT 플랜에서 Codex 사용하기</a>
+        <a href="https://openai.com/ko-KR/index/introducing-codex/" target="_blank" style="color:#1a365d;">🔗 Codex 소개 공식 블로그</a>
+      </div>
+    </div>
+  </section>
+
+  <div class="footer">
+    Codex (OpenAI) 워크북 · 조쉬 영상 기반 한글 정리
+  </div>
+
+</div>
+
+<button class="to-top" onclick="window.scrollTo({top:0, behavior:'smooth'})">↑</button>
+<script>
+  const toTop = document.querySelector('.to-top');
+  window.addEventListener('scroll', () => {
+    if (window.scrollY > 400) toTop.classList.add('visible');
+    else toTop.classList.remove('visible');
+  });
+</script>
+</body>
+</html>
